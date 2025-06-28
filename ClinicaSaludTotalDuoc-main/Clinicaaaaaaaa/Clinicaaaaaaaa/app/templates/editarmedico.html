@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Médico - Clínica Médica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/editarmedico.css') }}">
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/salud_total_icon.png') }}" alt="Logo" class="logo">
+                <h1>Clínica Médica</h1>
+            </div>
+            
+            <nav class="menu">
+                <a href="{{ url_for('dashboard') }}" class="menu-item">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="{{ url_for('medicos') }}" class="menu-item active">
+                    <span class="icon">👨‍⚕️</span>
+                    Médicos
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">👥</span>
+                    Pacientes
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📅</span>
+                    Citas
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📊</span>
+                    Reportes
+                </a>
+                <a href="{{ url_for('logout') }}" class="menu-item logout">
+                    <span class="icon">🚪</span>
+                    Cerrar Sesión
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="edit-container">
+                <h1>Editar Médico</h1>
+                
+                <form method="POST" class="edit-form">
+                    {{ form.csrf_token }}
+                    
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        {{ form.nombre(class="form-control", id="nombre") }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="apPaterno">Apellido Paterno</label>
+                        {{ form.apPaterno(class="form-control", id="apPaterno") }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="apMaterno">Apellido Materno</label>
+                        {{ form.apMaterno(class="form-control", id="apMaterno") }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="direccion">Dirección</label>
+                        {{ form.direccion(class="form-control", id="direccion") }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="certificacion">Certificación</label>
+                        {{ form.certificacion(class="form-control", id="certificacion") }}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Especialidad</label>
+                        <input type="text" class="form-control" value="{{ medico.especialidad.nom_espe }}" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="activo">Estado</label>
+                        {{ form.activo(class="form-check-input", id="activo") }}
+                        <span class="form-check-label">Activo</span>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="icon">💾</span>
+                            Guardar Cambios
+                        </button>
+                        <a href="{{ url_for('medicos') }}" class="btn btn-secondary">
+                            <span class="icon">⬅️</span>
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

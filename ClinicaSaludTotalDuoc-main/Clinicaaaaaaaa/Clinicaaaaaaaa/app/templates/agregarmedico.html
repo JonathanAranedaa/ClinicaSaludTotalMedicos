@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Médico - Clínica Médica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/agregarmedico.css') }}">
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/salud_total_icon.png') }}" alt="Logo" class="logo">
+                <h1>Clínica Médica</h1>
+            </div>
+            
+            <nav class="menu">
+                <a href="{{ url_for('dashboard') }}" class="menu-item">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="{{ url_for('medicos') }}" class="menu-item active">
+                    <span class="icon">👨‍⚕️</span>
+                    Médicos
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">👥</span>
+                    Pacientes
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📅</span>
+                    Citas
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📊</span>
+                    Reportes
+                </a>
+                <a href="{{ url_for('logout') }}" class="menu-item logout">
+                    <span class="icon">🚪</span>
+                    Cerrar Sesión
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h2>Agregar Médico</h2>
+            </header>
+
+            <div class="form-container">
+                <form class="medico-form" method="POST" action="{{ url_for('agregar_medico') }}">{{ form.hidden_tag() }}
+                    <!-- Datos Personales -->
+                    <div class="form-section">
+                        <h3>Datos Personales</h3>
+                        <div class="form-group">
+                            <label for="rut">RUT:</label>
+                            {{ form.rut(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            <label for="correo">Correo Electrónico:</label>
+                            {{ form.correo(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            <label for="contrasena">Contraseña:</label>
+                            {{ form.contrasena(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            <label for="nombre">Nombre:</label>
+                            {{ form.nombre(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            <label for="apPaterno">Apellido Paterno:</label>
+                            {{ form.apPaterno(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            <label for="apMaterno">Apellido Materno:</label>
+                            {{ form.apMaterno(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            <label for="sexo">Sexo</label>
+                            <select id="sexo" name="sexo" class="form-control">
+                                <option value="">Seleccione...</option>
+                                <option value="true">Masculino</option>
+                                <option value="false">Femenino</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="direccion">Dirección:</label>
+                            {{ form.direccion(class="form-control") }}
+                        </div>
+                    </div>
+
+                    <!-- Datos Profesionales -->
+                    <div class="form-section">
+                        <h3>Datos Profesionales</h3>
+                        <div class="form-group">
+                            {{ form.idespecialidad.label }}
+                            {{ form.idespecialidad(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            <label for="certificacion">Certificación:</label>
+                            {{ form.certificacion(class="form-control") }}
+                        </div>
+
+
+                        <div class="form-actions">
+                            <button type="submit" class="submit-btn">Guardar Médico</button>
+                            <a href="{{ url_for('medicos') }}" class="cancel-btn">Cancelar</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

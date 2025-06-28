@@ -1,0 +1,221 @@
+.page-title {
+    margin-bottom: 30px;
+    color: #333;
+    border-bottom: 3px solid #4169e1;
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+.stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.stat-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-link {
+    text-decoration: none !important;
+    color: inherit;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.card-link:hover {
+    text-decoration: none !important;
+    color: inherit;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.stat-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.stat-icon {
+    font-size: 2em;
+}
+
+.stat-text {
+    text-align: left;
+}
+
+.stat-text h3 {
+    font-size: 1.5em;
+    margin: 0;
+}
+
+.stat-text p {
+    margin: 5px 0 0;
+    font-size: 0.8em;
+    opacity: 0.8;
+}
+
+.doctors-list-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 30px;
+}
+
+.doctors-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.doctors-table th {
+    background: #f8f9fa;
+    padding: 12px;
+    text-align: left;
+    color: #666;
+    font-weight: 600;
+}
+
+.doctors-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.doctor-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.doctor-initial {
+    background: #e3f2fd;
+    color: #4169e1;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.action-buttons form {
+    margin: 0;
+    padding: 0;
+}
+
+.action-buttons button,
+.action-buttons a {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.action-buttons button:hover,
+.action-buttons a:hover {
+    background-color: #f0f0f0;
+}
+
+.action-buttons .edit {
+    color: #28a745;
+}
+
+.action-buttons .delete {
+    color: #dc3545;
+}
+
+.action-buttons .view {
+    color: #17a2b8;
+}
+
+.doctor-name {
+    font-weight: 500;
+}
+
+.doctor-id {
+    font-size: 0.8em;
+    color: #666;
+}
+
+.status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    display: inline-block;
+}
+
+.status.active {
+    background: #e8f5e9;
+    color: #28a745;
+}
+
+.status.inactive {
+    background: #fee2e2;
+    color: #dc3545;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.action-btn:hover {
+    background: #f0f0f0;
+}
+
+.action-btn.edit:hover {
+    background: #e3f2fd;
+}
+
+.action-btn.delete:hover {
+    background: #fee2e2;
+}
+
+.action-btn.disable {
+    color: #dc3545;
+}
+
+.action-btn.enable {
+    color: #28a745;
+}
+
+.action-btn.disable:hover {
+    background: #fee2e2;
+}
+
+.action-btn.enable:hover {
+    background: #e8f5e9;
+}
+
+.action-btn.view:hover {
+    background: #f0f9ff;
+}
+
+.stat-card.non-clickable {
+    cursor: default;
+    pointer-events: none;
+}

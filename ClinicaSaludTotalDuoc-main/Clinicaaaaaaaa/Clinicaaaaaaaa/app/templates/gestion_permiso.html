@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Permisos - Panel Médico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_medico.css') }}">
+    <style>
+        .main-content { padding: 30px; }
+        .table-permisos { width: 100%; border-collapse: collapse; margin-top: 30px; }
+        .table-permisos th, .table-permisos td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        .table-permisos th { background: #2563eb; color: white; }
+        .table-permisos tr:nth-child(even) { background: #f5f7fb; }
+        .estado-activo { color: #28a745; font-weight: bold; }
+        .estado-inactivo { color: #dc3545; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/salud_total_icon.png') }}" alt="Logo" class="logo">
+                <h1>Clínica Médica</h1>
+            </div>
+            <nav class="menu">
+                <a href="/dashboard_medico" class="menu-item">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="/cambios_horario" class="menu-item">
+                    <span class="icon">⏰</span>
+                    Cambios de Horario
+                </a>
+                <a href="/gestion_permiso" class="menu-item active">
+                    <span class="icon">📝</span>
+                    Gestión Permiso
+                </a>
+                <a href="/pacientes_atendidos" class="menu-item">
+                    <span class="icon">👨‍⚕️</span>
+                    Pacientes Atendidos
+                </a>
+                <a href="/retroalimentacion" class="menu-item">
+                    <span class="icon">💬</span>
+                    Retroalimentación
+                </a>
+                <a href="/agenda_medico" class="menu-item">
+                    <span class="icon">📅</span>
+                    Agenda
+                </a>
+                <a href="/logout" class="menu-item logout">
+                    <span class="icon">🚪</span>
+                    Cerrar Sesión
+                </a>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h2>Gestión de Permisos</h2>
+            </header>
+            <section>
+                <h3>Permisos (Licencias) Activos</h3>
+                {% if licencias and licencias|length > 0 %}
+                <table class="table-permisos">
+                    <thead>
+                        <tr>
+                            <th>ID Licencia</th>
+                            <th>Fecha Atención</th>
+                            <th>Paciente</th>
+                            <th>Motivo</th>
+                            <th>Fecha Inicio Licencia</th>
+                            <th>Fecha Fin Licencia</th>
+                            <th>Duración (días)</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for l in licencias %}
+                        <tr>
+                            <td>{{ l.idlicencia if l.idlicencia is defined else l[0] }}</td>
+                            <td>{{ l.fecatencion if l.fecatencion is defined else l[4] }}</td>
+                            <td>
+                                {% if l.nombre_paciente is defined %}
+                                    {{ l.nombre_paciente }} {{ l.appaterno_paciente }} {{ l.apmaterno_paciente }}
+                                {% else %}
+                                    {{ l.nombre }} {{ l.appaterno }} {{ l.apmaterno }}
+                                {% endif %}
+                            </td>
+                            <td>{{ l.motivocita if l.motivocita is defined else l[9] }}</td>
+                            <td>{{ l.fecinicio if l.fecinicio is defined else l[1] }}</td>
+                            <td>{{ l.fecha_fin.strftime('%Y-%m-%d') if l.fecha_fin else '-' }}</td>
+                            <td>{{ l.duracionlicencia if l.duracionlicencia is defined else l[2] }}</td>
+                            <td>
+                                {% if (l.activo if l.activo is defined else l[3]) %}
+                                    <span class="estado-activo">Activo</span>
+                                {% else %}
+                                    <span class="estado-inactivo">Inactivo</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>No tienes permisos/licencias activos actualmente.</p>
+                {% endif %}
+            </section>
+        </main>
+    </div>
+</body>
+</html> 

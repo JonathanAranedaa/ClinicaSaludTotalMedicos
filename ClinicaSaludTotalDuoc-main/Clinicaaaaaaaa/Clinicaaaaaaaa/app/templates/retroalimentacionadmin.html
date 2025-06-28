@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retroalimentación - Clínica Médica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_medico.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/retroalimentacion.css') }}">
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/salud_total_icon.png') }}" alt="Logo" class="logo">
+                <h1>Clínica Médica</h1>
+            </div>
+            
+            <nav class="menu">
+                <a href="{{ url_for('dashboard') }}" class="menu-item">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="{{ url_for('medicos') }}" class="menu-item">
+                    <span class="icon">👨‍⚕️</span>
+                    Médicos
+                </a>
+                <a href="{{ url_for('pacientes_atendidos') }}" class="menu-item">
+                    <span class="icon">👥</span>
+                    Pacientes
+                </a>
+                <a href="{{ url_for('citas') }}" class="menu-item">
+                    <span class="icon">📅</span>
+                    Citas
+                </a>
+                <a href="{{ url_for('retroalimentacionadmin') }}" class="menu-item active">
+                    <span class="icon">📊</span>
+                    Retroalimentación
+                </a>
+                <a href="{{ url_for('logout') }}" class="menu-item logout">
+                    <span class="icon">🚪</span>
+                    Cerrar Sesión
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header-content">
+                <div class="header-title">Retroalimentación</div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Médico</th>
+                            <th>Tipo</th>
+                            <th>Mensaje</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for retro in retroalimentaciones %}
+                        <tr>
+                            <td>{{ retro.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+                            <td>{{ retro.medico_nombre }}</td>
+                            <td>
+                                <span class="badge {% if retro.tipo == 'Error' %}bg-danger{% elif retro.tipo == 'Sugerencia' %}bg-info{% elif retro.tipo == 'Mejora' %}bg-success{% else %}bg-secondary{% endif %}">
+                                    {{ retro.tipo }}
+                                </span>
+                            </td>
+                            <td>{{ retro.mensaje }}</td>
+                            <td>
+                                <span class="badge {% if retro.estado == 'Pendiente' %}bg-warning{% else %}bg-success{% endif %}">
+                                    {{ retro.estado }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if retro.estado == 'Pendiente' %}
+                                    <form action="{{ url_for('cambiar_estado_retroalimentacion', idretro=retro.id) }}" method="POST" style="display: inline;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            <span class="icon">✓</span>
+                                            Marcar como resuelta
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

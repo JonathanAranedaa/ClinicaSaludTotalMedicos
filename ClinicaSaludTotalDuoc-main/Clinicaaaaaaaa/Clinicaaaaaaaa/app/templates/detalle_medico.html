@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Médico - Clínica Médica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/detalle_medico.css') }}">
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/salud_total_icon.png') }}" alt="Logo" class="logo">
+                <h1>Clínica Médica</h1>
+            </div>
+            
+            <nav class="menu">
+                <a href="{{ url_for('dashboard') }}" class="menu-item">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="{{ url_for('medicos') }}" class="menu-item active">
+                    <span class="icon">👨‍⚕️</span>
+                    Médicos
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">👥</span>
+                    Pacientes
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📅</span>
+                    Citas
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📊</span>
+                    Reportes
+                </a>
+                <a href="{{ url_for('logout') }}" class="menu-item logout">
+                    <span class="icon">🚪</span>
+                    Cerrar Sesión
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="detalle-container">
+                <h1>Detalles del Médico</h1>
+                
+                <div class="info-card">
+                    <div class="info-section">
+                        <h2>Información Personal</h2>
+                        <div class="info-row">
+                            <label>RUT:</label>
+                            <span>{{ medico.rut }}</span>
+                        </div>
+                        <div class="info-row">
+                            <label>Nombre Completo:</label>
+                            <span>{{ medico.nombre }}</span>
+                        </div>
+                        <div class="info-row">
+                            <label>Correo Electrónico:</label>
+                            <span>{{ medico.correo }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <h2>Información Profesional</h2>
+                        <div class="info-row">
+                            <label>Especialidad:</label>
+                            <span>{{ medico.especialidad }}</span>
+                        </div>
+                        <div class="info-row">
+                            <label>Certificación:</label>
+                            <span>{{ medico.certificacion }}</span>
+                        </div>
+                        <div class="info-row">
+                            <label>Estado:</label>
+                            <span class="status {% if medico.estado == 'Activo' %}active{% else %}inactive{% endif %}">{{ medico.estado }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <h2>Datos Adicionales</h2>
+                        <div class="info-row">
+                            <label>Dirección:</label>
+                            <span>{{ medico.direccion }}</span>
+                        </div>
+                        <div class="info-row">
+                            <label>Sexo:</label>
+                            <span>{{ medico.sexo }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="{{ url_for('medicos') }}" class="btn back-btn">
+                        <span class="icon">⬅️</span>
+                        Volver a la Lista
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retroalimentación - Panel Médico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_medico.css') }}">
+    <style>
+        .main-content { padding: 30px; }
+        .feedback-form { background: #f5f7fb; padding: 30px 25px 25px 25px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(37,99,235,0.07); max-width: 600px; margin-left: auto; margin-right: auto; }
+        .feedback-form label { font-weight: 600; color: #2563eb; margin-bottom: 6px; display: block; }
+        .feedback-form select, .feedback-form textarea { width: 100%; border: 1px solid #bcd0ee; border-radius: 6px; padding: 10px; font-size: 1rem; margin-bottom: 15px; background: #fff; transition: border-color 0.2s; }
+        .feedback-form select:focus, .feedback-form textarea:focus { border-color: #2563eb; outline: none; }
+        .feedback-form button { background: #2563eb; color: #fff; border: none; border-radius: 6px; padding: 10px 28px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; box-shadow: 0 2px 6px rgba(37,99,235,0.08); }
+        .feedback-form button:hover { background: #174ea6; }
+        
+        .feedback-list { margin-top: 30px; }
+        .feedback-item { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); transition: transform 0.2s ease-in-out; }
+        .feedback-item:hover { transform: translateY(-2px); }
+        
+        .feedback-item .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .feedback-item .date {
+            color: #666;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        
+        .feedback-item .status {
+            display: inline-block;
+            min-width: 100px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .feedback-item .status.pendiente {
+            background: linear-gradient(135deg, #ffd700, #ffc107);
+            color: #333;
+        }
+        
+        .feedback-item .status.completado {
+            background: linear-gradient(135deg, #28a745, #218838);
+            color: white;
+        }
+        
+        .feedback-item .status:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .feedback-item .tipo {
+            color: #495057;
+            font-size: 0.9em;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .feedback-item .mensaje {
+            margin-top: 10px;
+            line-height: 1.6;
+            color: #495057;
+        }
+        
+        .feedback-item .mensaje::before {
+            content: '"';
+            font-size: 2em;
+            color: #2563eb;
+            position: absolute;
+            left: -15px;
+            top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/salud_total_icon.png') }}" alt="Logo" class="logo">
+                <h1>Clínica Médica</h1>
+            </div>
+            <nav class="menu">
+                <a href="/dashboard_medico" class="menu-item">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="/cambios_horario" class="menu-item">
+                    <span class="icon">⏰</span>
+                    Cambios de Horario
+                </a>
+                <a href="/gestion_permiso" class="menu-item">
+                    <span class="icon">📝</span>
+                    Gestión Permiso
+                </a>
+                <a href="/pacientes_atendidos" class="menu-item">
+                    <span class="icon">👨‍⚕️</span>
+                    Pacientes Atendidos
+                </a>
+                <a href="/retroalimentacion" class="menu-item active">
+                    <span class="icon">💬</span>
+                    Retroalimentación
+                </a>
+                <a href="/agenda_medico" class="menu-item">
+                    <span class="icon">📅</span>
+                    Agenda
+                </a>
+                <a href="/logout" class="menu-item logout">
+                    <span class="icon">🚪</span>
+                    Cerrar Sesión
+                </a>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h2>Retroalimentación</h2>
+            </header>
+            <section>
+                <h3>Enviar Retroalimentación</h3>
+                <form class="feedback-form" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <label for="tipo">Tipo de retroalimentación:</label><br>
+                    <select id="tipo" name="tipo" required style="width:100%;margin-bottom:10px;">
+                        <option value="Sugerencia">Sugerencia</option>
+                        <option value="Error">Error</option>
+                        <option value="Consulta">Consulta</option>
+                        <option value="Otro">Otro</option>
+                    </select><br>
+                    <label for="mensaje">Mensaje:</label><br>
+                    <textarea id="mensaje" name="mensaje" rows="4" style="width:100%;" required></textarea><br><br>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
+            </section>
+            <section class="feedback-list">
+                <h3>Retroalimentaciones Anteriores</h3>
+                {% if retro_list and retro_list|length > 0 %}
+                    {% for retro in retro_list %}
+                    <div class="feedback-item">
+                        <div class="header">
+                            <div class="date">{{ retro.fecha.strftime('%d/%m/%Y %H:%M') }}</div>
+                            <div class="status {{ retro.estado.lower() }}">{{ retro.estado }}</div>
+                        </div>
+                        <div class="tipo">{{ retro.tipo }}</div>
+                        <div class="mensaje">{{ retro.mensaje }}</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay retroalimentaciones registradas.</p>
+                {% endif %}
+            </section>
+        </main>
+    </div>
+</body>
+</html> 

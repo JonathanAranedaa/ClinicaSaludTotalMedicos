@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Médicos - Clínica Médica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/medicos.css') }}">
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/salud_total_icon.png') }}" alt="Logo" class="logo">
+                <h1>Clínica Médica</h1>
+            </div>
+            
+            <nav class="menu">
+                <a href="{{ url_for('dashboard') }}" class="menu-item">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="{{ url_for('medicos') }}" class="menu-item active">
+                    <span class="icon">👨‍⚕️</span>
+                    Médicos
+                </a>
+                <a href="{{ url_for('pacientes_atendidos') }}" class="menu-item">
+                    <span class="icon">👥</span>
+                    Pacientes
+                </a>
+                <a href="{{ url_for('citas') }}" class="menu-item">
+                    <span class="icon">📅</span>
+                    Citas
+                </a>
+                <a href="{{ url_for('retroalimentacionadmin') }}" class="menu-item">
+                    <span class="icon">📊</span>
+                    Retroalimentación
+                </a>
+                <a href="{{ url_for('logout') }}" class="menu-item logout">
+                    <span class="icon">🚪</span>
+                    Cerrar Sesión
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1 class="page-title">Lista de Médicos</h1>
+
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <a href="{{ url_for('agregar_medico') }}" class="card-link">
+                        <span class="stat-icon">➕</span>
+                        <h4>Agregar Nuevo Médico</h4>
+                        <p>Haz clic aquí para agregar un nuevo médico</p>
+                    </a>
+                </div>
+                <div class="stat-card green non-clickable">
+                    <span class="stat-icon">👨‍⚕️</span>
+                    <h4>{{ total_medicos }}</h4>
+                    <p>Médicos Registrados</p>
+                </div>
+                <div class="stat-card yellow">
+                    <a href="{{ url_for('horarios') }}" class="card-link">
+                        <span class="stat-icon">⏰</span>
+                        <h4>Horarios Laborales</h4>
+                        <p>Ver y gestionar horarios</p>
+                    </a>
+                </div>
+            </div>
+
+            <div class="doctors-list-container">
+                <h2>Lista de Médicos</h2>
+                <table class="doctors-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nombre</th>
+                            <th>Especialidad</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for medico in medicos %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ medico.nombre }}</td>
+                                <td>{{ medico.especialidad }}</td>
+                                <td><span class="status {% if medico.activo %}active{% else %}inactive{% endif %}">{{ medico.estado }}</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="{{ url_for('editar_medico', idmedico=medico.id) }}" class="action-btn edit">✏️</a>
+                                        <form action="{{ url_for('cambiar_estado_medico', idmedico=medico.id) }}" method="POST">
+                                            {{ form_eliminar.csrf_token }}
+                                            <button type="submit" class="action-btn {% if medico.estado == 'Activo' %}disable{% else %}enable{% endif %}" 
+                                                    onclick="return confirm('¿Estás seguro de que quieres cambiar el estado de este médico?')">
+                                                {% if medico.estado == 'Activo' %}🚫{% else %}✅{% endif %}
+                                            </button>
+                                        </form>
+                                        <a href="{{ url_for('detalle_medico', idmedico=medico.id) }}" class="action-btn view">🔍</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

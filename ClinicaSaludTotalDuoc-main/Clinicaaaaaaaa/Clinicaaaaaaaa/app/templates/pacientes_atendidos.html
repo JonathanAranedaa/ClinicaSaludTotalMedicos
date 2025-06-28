@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacientes Atendidos - Panel Médico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_medico.css') }}">
+    <style>
+        .main-content { padding: 30px; }
+        .table-atendidos { width: 100%; border-collapse: collapse; margin-top: 30px; }
+        .table-atendidos th, .table-atendidos td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        .table-atendidos th { background: #2563eb; color: white; }
+        .table-atendidos tr:nth-child(even) { background: #f5f7fb; }
+        .estado-activo { color: #28a745; font-weight: bold; }
+        .estado-inactivo { color: #dc3545; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/salud_total_icon.png') }}" alt="Logo" class="logo">
+                <h1>Clínica Médica</h1>
+            </div>
+            <nav class="menu">
+                <a href="/dashboard_medico" class="menu-item">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="/cambios_horario" class="menu-item">
+                    <span class="icon">⏰</span>
+                    Cambios de Horario
+                </a>
+                <a href="/gestion_permiso" class="menu-item">
+                    <span class="icon">📝</span>
+                    Gestión Permiso
+                </a>
+                <a href="/pacientes_atendidos" class="menu-item active">
+                    <span class="icon">👨‍⚕️</span>
+                    Pacientes Atendidos
+                </a>
+                <a href="/retroalimentacion" class="menu-item">
+                    <span class="icon">💬</span>
+                    Retroalimentación
+                </a>
+                <a href="/agenda_medico" class="menu-item">
+                    <span class="icon">📅</span>
+                    Agenda
+                </a>
+                <a href="/logout" class="menu-item logout">
+                    <span class="icon">🚪</span>
+                    Cerrar Sesión
+                </a>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h2>Pacientes Atendidos</h2>
+            </header>
+            <section>
+                <h3>Historial de Pacientes Atendidos</h3>
+                {% if atenciones and atenciones|length > 0 %}
+                <table class="table-atendidos">
+                    <thead>
+                        <tr>
+                            <th>Fecha Atención</th>
+                            <th>Paciente</th>
+                            <th>Motivo</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for a in atenciones %}
+                        <tr>
+                            <td>{{ a.fecatencion if a.fecatencion is defined else a[0] }}</td>
+                            <td>
+                                {% if a.nombre_paciente is defined %}
+                                    {{ a.nombre_paciente }} {{ a.appaterno_paciente }} {{ a.apmaterno_paciente }}
+                                {% else %}
+                                    {{ (a.nombre if a.nombre is defined else a[1]) ~ ' ' ~ (a.appaterno if a.appaterno is defined else a[2]) ~ ' ' ~ (a.apmaterno if a.apmaterno is defined else a[3]) }}
+                                {% endif %}
+                            </td>
+                            <td>{{ a.motivocita if a.motivocita is defined else a[4] }}</td>
+                            <td>
+                                {% if (a.activo if a.activo is defined else a[6]) %}
+                                    <span class="estado-activo">Completada</span>
+                                {% else %}
+                                    <span class="estado-inactivo">Inactiva</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p>No hay pacientes atendidos registrados.</p>
+                {% endif %}
+            </section>
+        </main>
+    </div>
+</body>
+</html> 

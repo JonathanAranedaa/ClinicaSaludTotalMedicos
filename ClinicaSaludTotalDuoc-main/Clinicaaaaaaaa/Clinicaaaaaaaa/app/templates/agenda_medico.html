@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda de Citas - Panel Médico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_medico.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+    <style>
+        .calendar-container { margin-top: 20px; background: white; border-radius: 10px; box-shadow: 0 3px 8px rgb(0 0 0 / 0.1); overflow: hidden; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #eef6ff; border-bottom: 1px solid #ddd; gap: 10px; flex-wrap: wrap; }
+        .week-label { font-size: 1.1rem; font-weight: 600; color: #2563eb; flex: 1; text-align: center; min-width: 200px; }
+        .btn-secondary { color: #2563eb; background-color: white; border: 1px solid #ddd; padding: 8px 16px; border-radius: 6px; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; min-width: 120px; justify-content: center; }
+        .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px; padding: 20px; overflow: hidden; background: white; height: calc(100vh - 200px); }
+        .day-column { background: white; border-radius: 10px; box-shadow: 0 2px 4px rgb(0 0 0 / 0.05); overflow: hidden; height: 100%; display: flex; flex-direction: column; }
+        .day-header { text-align: center; padding: 14px 8px 6px; background: #eef6ff; font-weight: 700; font-size: 1.1rem; color: #2563eb; user-select: none; flex-shrink: 0; }
+        .date-label { text-align: center; font-weight: 500; font-size: 0.9rem; color: #555; padding-bottom: 12px; user-select: none; flex-shrink: 0; }
+        .times-list { overflow-y: auto; flex-grow: 1; padding: 0 8px 8px; border-top: 1px solid #ddd; max-height: 500px; }
+        .time-slot { user-select: none; padding: 6px 10px; margin: 4px 0; border-radius: 6px; text-align: center; font-size: 0.9rem; cursor: pointer; transition: background-color 0.3s ease, color 0.3s ease; border: 1px solid transparent; position: relative; }
+        .time-slot.cita { background-color: #22c55e; color: white; border-color: #16a34a; font-weight: bold; }
+        .time-slot.cita:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 50%;
+            top: -40px;
+            transform: translateX(-50%);
+            background: #2563eb;
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 6px;
+            white-space: pre-line;
+            font-size: 0.95em;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.13);
+            pointer-events: none;
+        }
+        .time-slot.disabled { cursor: not-allowed; opacity: 0.5; }
+        .time-slot:hover { background: #cbd7ff; }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/salud_total_icon.png') }}" alt="Logo" class="logo">
+                <h1>Clínica Médica</h1>
+            </div>
+            <nav class="menu">
+                <a href="/dashboard_medico" class="menu-item">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="/cambios_horario" class="menu-item">
+                    <span class="icon">⏰</span>
+                    Cambios de Horario
+                </a>
+                <a href="/gestion_permiso" class="menu-item">
+                    <span class="icon">📝</span>
+                    Gestión Permiso
+                </a>
+                <a href="/pacientes_atendidos" class="menu-item">
+                    <span class="icon">👨‍⚕️</span>
+                    Pacientes Atendidos
+                </a>
+                <a href="/retroalimentacion" class="menu-item">
+                    <span class="icon">💬</span>
+                    Retroalimentación
+                </a>
+                <a href="/agenda_medico" class="menu-item active">
+                    <span class="icon">📅</span>
+                    Agenda
+                </a>
+                <a href="/logout" class="menu-item logout">
+                    <span class="icon">🚪</span>
+                    Cerrar Sesión
+                </a>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h2>Agenda de Citas</h2>
+            </header>
+            <div class="calendar-container">
+                <header class="calendar-header mb-3">
+                    <button class="btn btn-secondary btn-sm mr-2" id="prevWeekBtn" aria-label="Semana anterior">
+                        <i class="fas fa-chevron-left"></i>
+                        Semana Anterior
+                    </button>
+                    <div id="weekLabel" class="week-label text-center">
+                        Semana actual
+                    </div>
+                    <button class="btn btn-secondary btn-sm ml-2" id="nextWeekBtn" aria-label="Semana siguiente">
+                        Semana Siguiente
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </header>
+                <div class="calendar" role="grid" aria-label="Calendario semanal">
+                    <!-- 7 day columns dynamically generated by JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        // --- Lógica JS para el calendario de citas ---
+        // JINJA-START
+        var citas = JSON.parse('{{ citas|tojson|safe }}');
+        console.log('CITAS RECIBIDAS:', citas);
+                // JINJA-END
+        (function() {
+            const dayNames = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+            const calendarEl = document.querySelector('.calendar');
+            const weekLabelEl = document.getElementById('weekLabel');
+            const prevBtn = document.getElementById('prevWeekBtn');
+            const nextBtn = document.getElementById('nextWeekBtn');
+            let currentMonday = getMonday(new Date());
+            window.currentMonday = currentMonday;
+            function padZero(n) { return n < 10 ? '0' + n : n; }
+            function getMonday(d) {
+                d = new Date(d);
+                const day = d.getDay();
+                const diff = (day === 0 ? -6 : 1) - day;
+                d.setDate(d.getDate() + diff);
+                d.setHours(0,0,0,0);
+                return d;
+            }
+            function formatDate(date) {
+                if (!date) return '';
+                if (typeof date === 'string' && date.includes('T')) date = date.split('T')[0];
+                let d = new Date(date);
+                if (isNaN(d.getTime())) {
+                    // formato yyyy-mm-dd
+                    const [year, month, day] = date.split('-').map(Number);
+                    d = new Date(year, month - 1, day);
+                }
+                return padZero(d.getDate()) + '/' + padZero(d.getMonth() + 1) + '/' + d.getFullYear();
+            }
+            function formatHour(dt) {
+                if (!dt) return '';
+                let d = new Date(dt);
+                if (isNaN(d.getTime()) && typeof dt === 'string' && dt.includes(' ')) {
+                    // formato yyyy-mm-dd hh:mm:ss
+                    const [datePart, timePart] = dt.split(' ');
+                    const [year, month, day] = datePart.split('-').map(Number);
+                    const [hour, min] = timePart.split(':');
+                    d = new Date(year, month - 1, day, hour, min);
+                }
+                return padZero(d.getHours()) + ':' + padZero(d.getMinutes());
+            }
+            function buildCalendar(monday) {
+                calendarEl.innerHTML = '';
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                for(let i = 0; i < 7; i++) {
+                    const dayDate = new Date(monday);
+                    dayDate.setDate(monday.getDate() + i);
+                    const dayCol = document.createElement('div');
+                    dayCol.className = 'day-column';
+                    dayCol.setAttribute('role', 'gridcell');
+                    dayCol.setAttribute('aria-label', dayNames[i] + ', ' + formatDate(dayDate));
+                    const dayHeader = document.createElement('div');
+                    dayHeader.className = 'day-header';
+                    dayHeader.textContent = dayNames[i];
+                    dayCol.appendChild(dayHeader);
+                    const dateLabel = document.createElement('div');
+                    dateLabel.className = 'date-label';
+                    dateLabel.textContent = formatDate(dayDate);
+                    dayCol.appendChild(dateLabel);
+                    const timesList = document.createElement('div');
+                    timesList.className = 'times-list';
+                    timesList.setAttribute('tabindex', 0);
+                    timesList.setAttribute('aria-label', 'Selector de horas');
+                    timesList.setAttribute('role', 'list');
+                    timesList.dataset.dayIndex = i;
+                    const timeSlots = [];
+                    for(let h=8; h<=20; h++) {
+                        timeSlots.push(padZero(h) + ':00');
+                        timeSlots.push(padZero(h) + ':30');
+                    }
+                    timeSlots.forEach(time => {
+                        const timeDiv = document.createElement('div');
+                        timeDiv.className = 'time-slot';
+                        timeDiv.textContent = time;
+                        timeDiv.setAttribute('role', 'listitem');
+                        timeDiv.tabIndex = -1;
+                        timeDiv.dataset.time = time;
+                        const date = new Date(dayDate);
+                        if (isNaN(date.getTime())) return;
+                        timeDiv.dataset.date = formatDate(date);
+                        // Deshabilitar días pasados
+                        if (dayDate < today) {
+                            timeDiv.classList.add('disabled');
+                            timeDiv.style.opacity = '0.5';
+                            timeDiv.style.cursor = 'not-allowed';
+                            timeDiv.tabIndex = -1;
+                            return;
+                        }
+                        // Marcar si hay cita en este slot (rango)
+                        const slotDateTime = new Date(Date.UTC(
+                            date.getFullYear(), date.getMonth(), date.getDate(),
+                            parseInt(time.split(':')[0]), parseInt(time.split(':')[1])
+                        ));
+                        // Log para depuración de slots
+                        console.log('SLOT:', slotDateTime.toISOString(), 'TIME:', time);
+                        let match = false;
+                        const cita = citas.find(c => {
+                            const inicio = new Date(c.inicio);
+                            const fin = new Date(c.fin);
+                            const inRange = slotDateTime >= inicio && slotDateTime < fin;
+                            if (inRange) {
+                                console.log('MATCH:', {
+                                    slot: slotDateTime.toISOString(),
+                                    inicio: inicio.toISOString(),
+                                    fin: fin.toISOString(),
+                                    paciente: c.nombre_paciente
+                                });
+                                match = true;
+                            }
+                            return inRange;
+                        });
+                        if (cita) {
+                            timeDiv.classList.add('cita');
+                            timeDiv.setAttribute('data-tooltip', `Paciente: ${cita.nombre_paciente} ${cita.appaterno_paciente} ${cita.apmaterno_paciente}\nMotivo: ${cita.motivo}`);
+                        }
+                        if (!match && cita) {
+                            console.log('NO MATCH SLOT:', slotDateTime.toISOString(), 'CITA:', cita);
+                        }
+                        timesList.appendChild(timeDiv);
+                    });
+                    dayCol.appendChild(timesList);
+                    calendarEl.appendChild(dayCol);
+                }
+            }
+            function updateWeekLabel(monday) {
+                const sunday = new Date(monday);
+                sunday.setDate(monday.getDate() + 6);
+                weekLabelEl.textContent = 'Semana del ' + formatDate(monday) + ' al ' + formatDate(sunday);
+            }
+            function init() {
+                updateWeekLabel(currentMonday);
+                buildCalendar(currentMonday);
+            }
+            prevBtn.addEventListener('click', () => {
+                currentMonday.setDate(currentMonday.getDate() - 7);
+                init();
+            });
+            nextBtn.addEventListener('click', () => {
+                currentMonday.setDate(currentMonday.getDate() + 7);
+                init();
+            });
+            init();
+        })();
+    </script>
+</body>
+</html> 

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Médico - Clínica Médica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_medico.css') }}">
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/salud_total_icon.png') }}" alt="Logo" class="logo">
+                <h1>Clínica Médica</h1>
+            </div>
+            <nav class="menu">
+                <a href="#" class="menu-item active">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </a>
+                <a href="/cambios_horario" class="menu-item">
+                    <span class="icon">⏰</span>
+                    Cambios de Horario
+                </a>
+                <a href="/gestion_permiso" class="menu-item">
+                    <span class="icon">📝</span>
+                    Gestión Permiso
+                </a>
+                <a href="/pacientes_atendidos" class="menu-item">
+                    <span class="icon">👨‍⚕️</span>
+                    Pacientes Atendidos
+                </a>
+                <a href="/retroalimentacion" class="menu-item">
+                    <span class="icon">💬</span>
+                    Retroalimentación
+                </a>
+                <a href="{{ url_for('citas') }}" class="menu-item">
+                    <span class="icon">📅</span>
+                    Citas
+                </a>
+                <a href="/logout" class="menu-item logout">
+                    <span class="icon">🚪</span>
+                    Cerrar Sesión
+                </a>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h2>Panel Médico</h2>
+            </header>
+            <div class="welcome-card">
+                <div class="welcome-text">
+                    <h3>Bienvenido, {{ nombre }} {{ apPaterno }} {{ apMaterno }}</h3>
+                    <p>Aquí tienes un resumen de la actividad reciente.</p>
+                </div>
+                <div class="profile-icon">👤</div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card red">
+                    <span class="stat-icon">⏰</span>
+                    <h4>{{ cambios_horario }}</h4>
+                    <p>Cambios de Horario (alertas)</p>
+                </div>
+                <div class="stat-card blue">
+                    <span class="stat-icon">📝</span>
+                    <h4>{{ permisos_activos }}</h4>
+                    <p>Permisos activos</p>
+                </div>
+                <div class="stat-card green">
+                    <span class="stat-icon">👨‍⚕️</span>
+                    <h4>{{ pacientes_atendidos }}</h4>
+                    <p>Citas de Hoy</p>
+                </div>
+                <div class="stat-card yellow">
+                    <span class="stat-icon">💬</span>
+                    <h4>{{ retro_pendiente }}</h4>
+                    <p>Retroalimentaciones pendientes de aprobación</p>
+                </div>
+            </div>
+            <!-- Aquí puedes agregar más secciones específicas para el médico -->
+            <section class="proximas-citas" style="margin-top:40px;">
+                <h3 style="color:#2563eb; margin-bottom:18px;">Próximas Citas de Hoy</h3>
+                {% if proximas_citas and proximas_citas|length > 0 %}
+                <table style="width:100%; background:white; border-radius:10px; box-shadow:0 2px 8px rgba(37,99,235,0.07); border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#eef6ff; color:#2563eb;">
+                            <th style="padding:10px 8px; text-align:left;">Hora</th>
+                            <th style="padding:10px 8px; text-align:left;">Paciente</th>
+                            <th style="padding:10px 8px; text-align:left;">Motivo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in proximas_citas %}
+                        <tr>
+                            <td style="padding:8px 8px;">{{ c.hora.strftime('%H:%M') if c.hora else '' }}</td>
+                            <td style="padding:8px 8px;">{{ c.nombre_paciente }} {{ c.appaterno_paciente }} {{ c.apmaterno_paciente }}</td>
+                            <td style="padding:8px 8px;">{{ c.motivo }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div style="background:white; border-radius:10px; box-shadow:0 2px 8px rgba(37,99,235,0.07); padding:30px; text-align:center; color:#888; font-size:1.1em;">
+                    ¡No tienes más citas agendadas para hoy!<br>Disfruta tu jornada y recuerda revisar tus retroalimentaciones pendientes.
+                </div>
+                {% endif %}
+            </section>
+        </main>
+    </div>
+</body>
+</html>
+</html> 

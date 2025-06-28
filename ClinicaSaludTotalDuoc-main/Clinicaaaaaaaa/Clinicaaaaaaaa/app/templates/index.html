@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Centro Médico Salud Total</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <img src="{{ url_for('static', filename='images/salud_total_icon.png') }}" alt="Salud Total" class="logo" />
+            <div class="header-text">
+                <h1>Centro Médico Salud Total</h1>
+                <p>Bienvenido a nuestro sistema de gestión médica</p>
+            </div>
+            <img src="{{ url_for('static', filename='images/medico_icon.png') }}" alt="Médicos" class="doctor-img" />
+        </header>
+
+        <main>
+            <h2>Seleccione su tipo de acceso</h2>
+            <div class="buttons">
+                <a href="/login" class="btn btn-admin">Acceso Administrativo</a>
+                <a href="/login_medico" class="btn btn-medico">Acceso Médico</a>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

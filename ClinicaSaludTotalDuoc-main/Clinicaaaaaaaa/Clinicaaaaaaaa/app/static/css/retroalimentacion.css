@@ -1,0 +1,131 @@
+.main-content {
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+
+.table-responsive {
+    margin-top: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table td {
+    padding: 12px;
+    vertical-align: middle;
+}
+
+.badge {
+    padding: 8px 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 4px;
+}
+
+.badge.bg-warning {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.badge.bg-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.875rem;
+    border-radius: 4px;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.table td {
+    word-break: break-word;
+    max-width: 200px;
+    white-space: normal;
+}
+
+.table td:first-child {
+    min-width: 150px;
+}
+
+.table td:nth-child(2) {
+    min-width: 100px;
+}
+
+.table td:nth-child(3) {
+    min-width: 300px;
+}
+
+.table td:nth-child(4) {
+    min-width: 150px;
+}
+
+.table td:nth-child(5) {
+    min-width: 120px;
+}
+
+.table td:nth-child(6) {
+    min-width: 100px;
+    text-align: center;
+}
+
+/* Estilos para el header */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header-title {
+    font-size: 1.5rem;
+    color: #333;
+    font-weight: 600;
+}
+
+/* Estilos para el botón de acción */
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Estilos para el icono del botón */
+.btn-action i {
+    font-size: 1rem;
+}

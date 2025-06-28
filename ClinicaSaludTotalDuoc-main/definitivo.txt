@@ -1,0 +1,309 @@
+HOST: clinicadb.postgres.database.azure.com
+Usuario: Administrador
+Contraseña: Integracion2025%
+Nombre BD: clinicaDB
+DROP TABLE IF EXISTS contacto_emergencias CASCADE;
+DROP TABLE IF EXISTS patologia_sintomas CASCADE;
+DROP TABLE IF EXISTS historial_alergias CASCADE;
+DROP TABLE IF EXISTS historial_patologias CASCADE;
+DROP TABLE IF EXISTS atencion_sintomas CASCADE;
+DROP TABLE IF EXISTS signos_vitales CASCADE;
+DROP TABLE IF EXISTS atencion_examenes CASCADE;
+DROP TABLE IF EXISTS receta_medicamentos CASCADE;
+DROP TABLE IF EXISTS recetas CASCADE;
+DROP TABLE IF EXISTS licencias CASCADE;
+DROP TABLE IF EXISTS atenciones CASCADE;
+DROP TABLE IF EXISTS citas CASCADE;
+DROP TABLE IF EXISTS horarios CASCADE;
+DROP TABLE IF EXISTS historiales CASCADE;
+DROP TABLE IF EXISTS seguros CASCADE;
+DROP TABLE IF EXISTS sintomas CASCADE;
+DROP TABLE IF EXISTS alergias CASCADE;
+DROP TABLE IF EXISTS patologias CASCADE;
+DROP TABLE IF EXISTS examenes CASCADE;
+DROP TABLE IF EXISTS medicamentos CASCADE;
+DROP TABLE IF EXISTS usuarios_roles CASCADE;
+DROP TABLE IF EXISTS medicos CASCADE;
+DROP TABLE IF EXISTS especialidades CASCADE;
+DROP TABLE IF EXISTS pacientes CASCADE;
+DROP TABLE IF EXISTS usuarios CASCADE;
+DROP TABLE IF EXISTS roles CASCADE;
+DROP TABLE IF EXISTS estados CASCADE;
+
+
+-- Tablas de catálogo/máster
+-- TABLA ESTRADOS
+CREATE TABLE estados (
+    id_estado SERIAL PRIMARY KEY,
+    estado VARCHAR(200) NOT NULL
+);
+
+-- TABLA ROLES
+CREATE TABLE roles (
+    id_rol SERIAL PRIMARY KEY,
+    nombre_rol VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- TABLA USUAIRIOS
+CREATE TABLE usuarios (
+    id_usuario SERIAL PRIMARY KEY,
+    rut VARCHAR(12) NOT NULL,
+    correo VARCHAR(200) NOT NULL,
+    contrasena VARCHAR(200) NOT NULL,
+    nombre VARCHAR(200) NOT NULL,
+    ap_paterno VARCHAR(200) NOT NULL,
+    ap_materno VARCHAR(200) NOT NULL,
+    sexo BOOLEAN NOT NULL,
+    direccion VARCHAR(200) NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT true
+);
+
+--TABLA PACIENTES
+CREATE TABLE pacientes (
+    id_paciente SERIAL PRIMARY KEY,
+    fecha_nac DATE NOT NULL,
+    telefono VARCHAR(200) NOT NULL,
+    email VARCHAR(200) NOT NULL,
+    fec_reg DATE NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT true,
+    id_usuario INTEGER NOT NULL REFERENCES usuarios(id_usuario)
+);
+
+-- TABLA ESPECIALIDADES
+CREATE TABLE especialidades (
+    id_especialidad SERIAL PRIMARY KEY,
+    nom_espe VARCHAR(200) NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT true
+);
+
+-- TABLA MEDICOS
+CREATE TABLE medicos (
+    id_medico SERIAL PRIMARY KEY,
+    certificacion VARCHAR(200) NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT true,
+    id_especialidad INTEGER NOT NULL REFERENCES especialidades(id_especialidad),
+    id_usuario INTEGER NOT NULL REFERENCES usuarios(id_usuario)
+);
+
+-- TABLA USUARIOS_ROLES
+CREATE TABLE usuarios_roles (
+    id_usuario INTEGER NOT NULL
+        REFERENCES usuarios(id_usuario)
+        ON DELETE CASCADE,    id_rol    INTEGER NOT NULL
+        REFERENCES roles(id_rol)
+        ON DELETE CASCADE,
+    PRIMARY KEY (id_usuario, id_rol)
+);
+
+-- TABLA MEDICAMENTOS
+CREATE TABLE medicamentos (
+    id_medicamento SERIAL PRIMARY KEY,
+    nombre_medicamento VARCHAR(100),
+    descripcion_medicamento TEXT,
+    medicamento_activo BOOLEAN,
+    fecha_vencimiento_medicamento DATE,
+    activo BOOLEAN NOT NULL DEFAULT true
+);
+
+-- TABLA EXAMENES
+CREATE TABLE examenes (
+    id_examen SERIAL PRIMARY KEY,
+    nombre_examen VARCHAR(100),
+    tipo_examen VARCHAR(50),
+    activo BOOLEAN NOT NULL DEFAULT true
+);
+
+-- TABLA PATOLOGIAS
+CREATE TABLE patologias (
+    id_patologia SERIAL PRIMARY KEY,
+    nombre_patologia VARCHAR(100) UNIQUE NOT NULL
+);
+
+-- TABLA ALERGIAS
+CREATE TABLE alergias (
+    id_alergia SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) UNIQUE NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT true
+);
+
+-- TABLA SINTOMAS
+CREATE TABLE sintomas (
+    id_sintoma SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) UNIQUE NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT true
+);
+
+-- TABLA SEGUROS
+CREATE TABLE seguros (
+    id_seguro SERIAL PRIMARY KEY,
+    nom_seguro VARCHAR(200) NOT NULL,
+    numero_poliza VARCHAR(200) NOT NULL,
+    fec_inicio DATE NOT NULL,
+    fec_termino DATE NOT NULL,
+    fec_registro DATE NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT true,
+    id_estado INTEGER NOT NULL REFERENCES estados(id_estado)
+);
+
+-- TABLA HISTORIALES
+CREATE TABLE historiales (
+    id_historial SERIAL PRIMARY KEY,
+    id_paciente INTEGER,
+    fecha_historial DATE,
+    estado_historial VARCHAR(50),
+    activo BOOLEAN NOT NULL DEFAULT true,
+    FOREIGN KEY (id_paciente) REFERENCES pacientes(id_paciente)
+);
+
+-- TABLA HORARIOS
+CREATE TABLE horarios (
+    id_horario SERIAL PRIMARY KEY,
+    id_medico INTEGER NOT NULL REFERENCES medicos(id_medico),
+    dia_semana VARCHAR(10) NOT NULL,
+    hora_inicio TIME NOT NULL,
+    hora_salida TIME NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT true
+);
+
+-- TABLA CITAS
+CREATE TABLE citas (
+    id_cita SERIAL PRIMARY KEY,
+    fec_en DATE NOT NULL,
+    hora_cita_inicio TIMESTAMP NOT NULL,
+    hora_cita_termino TIMESTAMP NOT NULL,
+    motivo_cita VARCHAR(500) NOT NULL,
+    token_cita VARCHAR(100) NOT NULL UNIQUE,
+    id_medico INTEGER NOT NULL REFERENCES medicos(id_medico),
+    id_paciente INTEGER NOT NULL REFERENCES pacientes(id_paciente),
+    id_seguro INTEGER NOT NULL REFERENCES seguros(id_seguro),
+    id_estado INTEGER NOT NULL REFERENCES estados(id_estado)
+);
+
+-- TABLA ATENCIONES
+CREATE TABLE atenciones (
+    id_atencion SERIAL PRIMARY KEY,
+    id_historial INTEGER,
+    id_medico INTEGER,
+    fecha_atencion TIMESTAMP,
+    diagnostico TEXT,
+    tratamiento TEXT,
+    estado_salud_paciente VARCHAR(100),
+    activo BOOLEAN NOT NULL DEFAULT true,
+    FOREIGN KEY (id_historial) REFERENCES historiales(id_historial),
+    FOREIGN KEY (id_medico) REFERENCES medicos(id_medico)
+);
+
+-- TABLA LICENCIAS
+CREATE TABLE licencias (
+    id_licencia SERIAL PRIMARY KEY,
+    id_atencion INTEGER,
+    fecha_emicion DATE,
+    duracion_licencia INT,
+    activo BOOLEAN NOT NULL DEFAULT true,
+    FOREIGN KEY (id_atencion) REFERENCES atenciones(id_atencion)
+);
+
+-- TABLA RECETAS
+CREATE TABLE recetas (
+    id_receta SERIAL PRIMARY KEY,
+    id_atencion INTEGER,
+    fecha_creacion DATE,
+    activo BOOLEAN NOT NULL DEFAULT true,
+    FOREIGN KEY (id_atencion) REFERENCES atenciones(id_atencion)
+);
+
+-- TABLA RECETA_MEDICAMENTOS
+CREATE TABLE receta_medicamentos (
+    id_receta_medicamento SERIAL PRIMARY KEY,
+    id_receta INTEGER,
+    id_medicamento INTEGER,
+    dosis VARCHAR(50),
+    frecuencia VARCHAR(50),
+    duracion VARCHAR(50),
+    activo BOOLEAN NOT NULL DEFAULT true,
+    FOREIGN KEY (id_receta) REFERENCES recetas(id_receta),
+    FOREIGN KEY (id_medicamento) REFERENCES medicamentos(id_medicamento)
+);
+
+-- TABLA ATENCION_EXAMENES
+CREATE TABLE atencion_examenes (
+    id_atencion_examen SERIAL PRIMARY KEY,
+    id_atencion INTEGER,
+    id_examen INTEGER,
+    resultado_examen TEXT,
+    tiene_resultado BOOLEAN DEFAULT FALSE,
+    archivo_resultado BYTEA,
+    nombre_archivo VARCHAR(255),
+    tipo_archivo VARCHAR(50),
+    activo BOOLEAN NOT NULL DEFAULT true,
+    FOREIGN KEY (id_atencion) REFERENCES atenciones(id_atencion),
+    FOREIGN KEY (id_examen) REFERENCES examenes(id_examen)
+);
+
+-- TABLA SIGNOS_VITALES
+CREATE TABLE signos_vitales (
+    id_signo_vital SERIAL PRIMARY KEY,
+    id_atencion INTEGER,
+    presion_arterial VARCHAR(20),
+    frecuencia_cardiaca INT,
+    frecuencia_respiratoria INT,
+    temperatura DECIMAL(3,1),
+    saturacion_oxigeno INT,
+    activo BOOLEAN NOT NULL DEFAULT true,
+    FOREIGN KEY (id_atencion) REFERENCES atenciones(id_atencion)
+);
+
+-- TABLA ATENCION_SINTOMAS
+CREATE TABLE atencion_sintomas (
+    id_atencion INTEGER NOT NULL REFERENCES atenciones(id_atencion),
+    id_sintoma INTEGER NOT NULL REFERENCES sintomas(id_sintoma),
+    PRIMARY KEY (id_atencion, id_sintoma)
+);
+
+-- TABLA HISTORIAL_PATOLOGIAS
+CREATE TABLE historial_patologias (
+    id_historial INTEGER,
+    id_patologia INTEGER,
+    activo BOOLEAN NOT NULL DEFAULT true,
+    PRIMARY KEY (id_historial, id_patologia),
+    FOREIGN KEY (id_historial) REFERENCES historiales(id_historial),
+    FOREIGN KEY (id_patologia) REFERENCES patologias(id_patologia)
+);
+
+-- TABLA HISTORIAL_ALERGIAS
+CREATE TABLE historial_alergias (
+    id_historial INTEGER,
+    id_alergia INTEGER,
+    activo BOOLEAN NOT NULL DEFAULT true,
+    PRIMARY KEY (id_historial, id_alergia),
+    FOREIGN KEY (id_historial) REFERENCES historiales(id_historial),
+    FOREIGN KEY (id_alergia) REFERENCES alergias(id_alergia)
+);
+
+-- TABLA PATOLOGIA_SINTOMAS
+CREATE TABLE patologia_sintomas (
+    id_patologia INTEGER,
+    id_sintoma INTEGER,
+    PRIMARY KEY (id_patologia, id_sintoma),
+    FOREIGN KEY (id_patologia) REFERENCES patologias(id_patologia),
+    FOREIGN KEY (id_sintoma) REFERENCES sintomas(id_sintoma)
+);
+
+-- TABLA CONTACO_EMERGENCIAS
+CREATE TABLE contacto_emergencias (
+    id_contacto SERIAL PRIMARY KEY,
+    nom_contacto VARCHAR(200) NOT NULL,
+    parentesco VARCHAR(200) NOT NULL,
+    telefono VARCHAR(200) NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT true,
+    id_paciente INTEGER NOT NULL REFERENCES pacientes(id_paciente)
+);
+
+--TABLA RETROALIMENTACIONES
+CREATE TABLE retroalimentaciones (
+    id_retroalimentacion SERIAL PRIMARY KEY,
+    id_medico NUMERIC NOT NULL REFERENCES medicos(id_medico),
+    tipo VARCHAR(30) NOT NULL DEFAULT 'Sugerencia',
+    fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    estado VARCHAR(20) NOT NULL DEFAULT 'Pendiente' -- o 'Resuelta'
+);
